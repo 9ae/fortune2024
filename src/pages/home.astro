@@ -3,90 +3,107 @@
 ---
 
 <div id="intro">
-    <p>To get your fortune, type in the number (1-101) on your chopsticks.</p>
+  <p>To get your fortune, type in the number (1-101) on your chopsticks.</p>
 
-    <input type="number" min="1" max="101" id="no" />
-    <button type="button" id="go">Tell me!</button>
+  <input type="number" min="1" max="101" id="no" />
+  <button type="button" id="go">Tell me!</button>
 </div>
 <div id="fortuneWrapper">
-    <p id="fortune"></p>
+  <p id="fortune"></p>
+  <div id="fortune-video"></div>
 </div>
 
 <script>
-import { fortunes, isVideo, isWords } from '../fortunes.js';
+  import { getFortunes, isVideo, isWords } from "../fortunes.js";
 
-document.getElementById("go").addEventListener("click", async () => {
-    const noValue = document.getElementById("no").value;
-    const no = parseInt(noValue - 1);
-    const index = no % fortunes.length;
-    const fortune = fortunes[index];
-    if (isWords(fortune)) {
-        const showFortune = document.getElementById("fortune");
-        const wrapper = document.getElementById("fortuneWrapper");
-        if (showFortune && wrapper) {
-            showFortune.innerHTML = fortune.message;
-            wrapper.scrollIntoView({ behavior: "smooth", block: "start"});
+  getFortunes().then((fortunes) => {
+    const fetchAndDisplayFortune = async () => {
+      const noValue = document.getElementById("no").value;
+      const no = parseInt(noValue);
+      const index = no % fortunes.length;
+      const fortune = fortunes[index];
+      const wrapper = document.getElementById("fortuneWrapper");
+      const showFortune = document.getElementById("fortune");
+      const videoWrapper = document.getElementById("fortune-video");
+
+      if (isWords(fortune)) {
+        if (showFortune) {
+          showFortune.innerText = fortune.message;
         }
-    }
+        if (videoWrapper) {
+          videoWrapper.innerHTML = "";
+        }
+      }
 
-    if (isVideo(fortune)) {
-        const video = fortune.url;
-        window.location.href = video;
-    }
-});
+      if (isVideo(fortune)) {
+        if (videoWrapper) {
+          videoWrapper.innerHTML = fortune.message;
+        }
+        if (showFortune) {
+          showFortune.innerText = "";
+        }
+      }
 
+      wrapper?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const goEl = document.getElementById("go");
+    goEl?.addEventListener("click", fetchAndDisplayFortune);
+  });
 </script>
 
 <style>
-    body, p {
-        font-family: sans-serif;
-        font-size: 2.0rem;
-        margin: 0;
-    }
+  body,
+  p {
+    font-family: sans-serif;
+    font-size: 2rem;
+    margin: 0;
+  }
 
-    input, button {
-        font-size: 3.0rem;
-    }
-    
-    button {
-        background-color: #751313;
-        color: #fff;
-        border: none;
-        outline: none;
-        padding: 1rem;
-    }
+  input,
+  button {
+    font-size: 3rem;
+  }
 
-    #intro {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        width: 100vw;
-        height: 100vh;
-        box-sizing: border-box;
-        padding: 3rem 1rem;
+  button {
+    background-color: #751313;
+    color: #fff;
+    border: none;
+    outline: none;
+    padding: 1rem;
+  }
 
-        background-color: #ffd562;
-    }
+  #intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 3rem 1rem;
 
-    #fortuneWrapper {
-        box-sizing: border-box;
-        width: 100vw;
-        height: 100vh;
-        margin: 0;
+    background-color: #ffd562;
+  }
 
-        background-color: #751313;
-        color: #fff;
+  #fortuneWrapper {
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    background-color: #751313;
+    color: #fff;
 
-        padding: 0.5em;
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-    #fortune {
-        text-align: center;
-    }
+    padding: 0.5em;
+  }
+
+  #fortune {
+    text-align: center;
+  }
 </style>
