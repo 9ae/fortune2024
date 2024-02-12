@@ -17,7 +17,8 @@ import { fortunes, isVideo, isWords } from '../fortunes.js';
 
 document.getElementById("go").addEventListener("click", async () => {
     const noValue = document.getElementById("no").value;
-    const index = parseInt(noValue - 1);
+    const no = parseInt(noValue - 1);
+    const index = no % fortunes.length;
     const fortune = fortunes[index];
     if (isWords(fortune)) {
         const showFortune = document.getElementById("fortune");
